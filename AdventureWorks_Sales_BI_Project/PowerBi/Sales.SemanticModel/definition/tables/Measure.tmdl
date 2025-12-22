@@ -1,0 +1,144 @@
+table Measure
+	lineageTag: 36f8c39b-8b34-4cd4-8685-7e6a094ae83b
+
+	measure TotalSales = SUM(vw_FactSales_Simulated[LineTotalAmount])
+		lineageTag: 9a291213-bd05-4ebf-b145-3bfbf9867048
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Orders' = DISTINCTCOUNT(vw_FactSales_Simulated[SalesOrderID])
+		formatString: 0
+		lineageTag: c07d3a6b-db06-4d16-a3fa-c349460bdbc1
+
+	measure 'Total Quantity' = SUM(vw_FactSales_Simulated[OrderQty])
+		formatString: 0
+		lineageTag: c7cb6cff-01a3-4945-934c-73467cf3c8e3
+
+	measure 'Average Order Value' = DIVIDE([TotalSales],[Total Orders],0)
+		lineageTag: f6ace7c1-2eaf-4373-be01-e24a240bfc51
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Sales MoM Change' = ```
+			
+			[TotalSales] -
+			CALCULATE(
+			    [TotalSales],
+			    DATEADD(DimDate[Date], -1, MONTH)
+			)
+			
+			```
+		lineageTag: 73b94ef8-8dea-4fd3-ae94-abc43411a1c7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'TotalSales MoM%' =
+			
+			VAR __PREV_MONTH = CALCULATE([TotalSales], DATEADD('DimDate'[Date], -1, MONTH))
+			RETURN
+			if(
+			    __PREV_MONTH<=0,
+			Blank(),
+				DIVIDE([TotalSales] - __PREV_MONTH, __PREV_MONTH))
+		lineageTag: efd37289-2fd1-4f97-95ab-76017bd43397
+
+		extendedProperty MeasureTemplate =
+				{
+				  "version": 0,
+				  "daxTemplateName": "MonthOverMonth"
+				}
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cumulative Sales' = ```
+			
+			VAR CurrentSales = [TotalSales]
+			RETURN
+			SUMX(
+			    FILTER(
+			        ALLSELECTED(vw_DimProduct[ProductName]),
+			        [TotalSales] >= CurrentSales
+			    ),
+			    [TotalSales]
+			)
+			
+			```
+		lineageTag: 168c85e2-df67-4ffc-9f00-d0bb015c45a1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Cumulative %' = [Cumulative Sales] / CALCULATE([TotalSales], ALLSELECTED(vw_DimProduct[ProductName]))
+		formatString: 0%;-0%;0%
+		lineageTag: 71d82eb0-c416-4786-8ba9-9ea8f25b69c3
+
+	measure 'Customer Cumulative Sales' = ```
+			
+			VAR CurrentSales = [TotalSales]
+			RETURN
+			SUMX(
+			    FILTER(
+			        ALLSELECTED(vw_DimCustomer[CompanyName]),
+			        [TotalSales] >= CurrentSales
+			    ),
+			    [TotalSales]
+			)
+			
+			```
+		lineageTag: b4c5b6b8-d10a-4d0c-a798-4321499b3642
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Cumulative-Customer% = [Customer Cumulative Sales] / CALCULATE([TotalSales], ALLSELECTED(vw_DimCustomer[CompanyName]))
+		formatString: 0%;-0%;0%
+		lineageTag: b8cb8424-4469-44db-b114-ca3b52b81332
+
+	measure 'Pareto 80% Line' = ```
+			0.8
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: e955d995-867d-4ade-a480-9f195b364468
+
+	measure 'Top 80%_Customer Color' = ```
+			
+			IF(
+			    [Cumulative-Customer%]  <= 0.8,
+			    "#1F77B4",   -- Blue (Top 80%)
+			    "#D3D3D3"    -- Gray (Bottom 20%)
+			)
+			
+			```
+		lineageTag: 94d4b8cd-5187-4826-ac8d-777ca0207f0a
+
+	measure 'Top 80%_Product Color' =
+			
+			IF(
+			    [Cumulative %]  <= 0.8,
+			    "#1F77B4",   -- Blue (Top 80%)
+			    "#D3D3D3"    -- Gray (Bottom 20%)
+			)
+		lineageTag: 42d54fd0-31ba-40b8-a7ae-2ea5131bc654
+
+	measure 'Customers to reach 80%' =
+			
+			COUNTROWS(
+			    FILTER(
+			    VALUES(vw_DimCustomer[CompanyName]),
+			    [Cumulative-Customer%]<0.8
+			    )
+			    )
+		formatString: 0
+		lineageTag: 3b6cd94a-37c6-4c8c-b790-66634dd54432
+
+	partition Measure = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

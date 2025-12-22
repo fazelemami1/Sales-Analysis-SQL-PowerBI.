@@ -1,0 +1,99 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 904.95447858612226,
+            "y": 292.71550787583692
+          },
+          "nodeIndex": "DimGeography",
+          "nodeLineageTag": "dbedf199-98ff-4f80-b53f-d4055abdef1e",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 304.95447858612215,
+            "y": 0
+          },
+          "nodeIndex": "vw_DimCustomer",
+          "nodeLineageTag": "501024ca-f005-4e25-81e9-148c475f835e",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 17.142857142857139,
+            "y": 282.85714285714283
+          },
+          "nodeIndex": "vw_DimProduct",
+          "nodeLineageTag": "7dc80990-2792-4ada-8793-2e6c028f3a35",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 609.33542460924593,
+            "y": 0
+          },
+          "nodeIndex": "DimDate",
+          "nodeLineageTag": "739df971-7fdc-4b43-a0a3-e9982c4a64b2",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 414.47828175210282,
+            "y": 307.85714285714289
+          },
+          "nodeIndex": "vw_FactSales_Simulated",
+          "nodeLineageTag": "cf3ba958-7d5e-4336-ac4f-44d0c00fe0d7",
+          "size": {
+            "height": 300,
+            "width": 329.71428571428578
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 1324.7639960378174,
+            "y": 0
+          },
+          "nodeIndex": "Measure",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 70,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

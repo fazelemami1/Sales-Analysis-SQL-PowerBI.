@@ -1,0 +1,15 @@
+expression vw_FactSales =
+		let
+		    Source = Sql.Databases(".\SQLEXPRESS"),
+		    AdventureWorksLT2025 = Source{[Name="AdventureWorksLT2025"]}[Data],
+		    dbo_vw_FactSales = AdventureWorksLT2025{[Schema="dbo",Item="vw_FactSales"]}[Data],
+		    #"Changed Type" = Table.TransformColumnTypes(dbo_vw_FactSales,{{"SalesOrderID", Int64.Type}, {"SalesOrderDetailID", Int64.Type}, {"CustomerID", Int64.Type}, {"ProductID", Int64.Type}, {"ShipToAddressID", Int64.Type}, {"BillToAddressID", Int64.Type}, {"OrderDate", type datetime}, {"DueDate", type datetime}, {"ShipDate", type datetime}, {"OrderQty", Int64.Type}, {"UnitPriceAmount", type number}, {"UnitPriceDiscount", type number}, {"LineTotalAmount", type number}, {"SalesOrderNumber", type text}, {"Status", Int64.Type}, {"ShipMethod", type text}}),
+		    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"SalesOrderID", "SalesOrderDetailID", "CustomerID", "ProductID", "ShipToAddressID", "BillToAddressID", "OrderDate", "DueDate", "ShipDate", "OrderQty", "UnitPriceAmount", "UnitPriceDiscount", "LineTotalAmount", "SalesOrderNumber", "Status", "ShipMethod"})
+		in
+		    #"Removed Other Columns"
+	lineageTag: a09c82bc-1b00-4b54-bc0f-acd5c7c8b074
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

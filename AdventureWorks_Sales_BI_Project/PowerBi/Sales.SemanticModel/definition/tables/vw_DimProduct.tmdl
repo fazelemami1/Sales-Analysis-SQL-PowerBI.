@@ -1,0 +1,100 @@
+table vw_DimProduct
+	lineageTag: 7dc80990-2792-4ada-8793-2e6c028f3a35
+
+	column ProductID
+		dataType: int64
+		formatString: 0
+		lineageTag: d062ab7d-87a5-41a0-80da-39209bf75f9c
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductName
+		dataType: string
+		lineageTag: ea5003cc-39c0-4eaf-abb0-ec9d98e5f29a
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductNumber
+		dataType: string
+		lineageTag: be56fd20-3ef4-4f8f-ae1d-07d0b989e449
+		summarizeBy: none
+		sourceColumn: ProductNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductCategoryName
+		dataType: string
+		lineageTag: 7c5cfe2a-1162-4650-970e-bf0d82930aac
+		summarizeBy: none
+		sourceColumn: ProductCategoryName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ListPrice
+		dataType: double
+		lineageTag: 24dfba67-4065-4c30-86a3-48fe5602e029
+		summarizeBy: none
+		sourceColumn: ListPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column StandardCost
+		dataType: double
+		lineageTag: c1855313-8330-4661-ad98-8f3f98b7bb16
+		summarizeBy: none
+		sourceColumn: StandardCost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Color
+		dataType: string
+		lineageTag: 92a74ab1-e365-46c5-a553-2b4cb097d3c6
+		summarizeBy: none
+		sourceColumn: Color
+
+		annotation SummarizationSetBy = Automatic
+
+	column Size
+		dataType: int64
+		formatString: 0
+		lineageTag: 69182e93-c295-47f7-a212-f41a436552c1
+		summarizeBy: none
+		sourceColumn: Size
+
+		annotation SummarizationSetBy = Automatic
+
+	column Weight
+		dataType: double
+		lineageTag: fa8c356c-a549-4a76-b847-c8aa87108a69
+		summarizeBy: none
+		sourceColumn: Weight
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition vw_DimProduct = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases(".\SQLEXPRESS"),
+				    AdventureWorksLT2025 = Source{[Name="AdventureWorksLT2025"]}[Data],
+				    dbo_vw_DimProduct = AdventureWorksLT2025{[Schema="dbo",Item="vw_DimProduct"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(dbo_vw_DimProduct,{{"ProductID", Int64.Type}, {"ProductName", type text}, {"ProductNumber", type text}, {"ProductCategoryName", type text}, {"ListPrice", type number}, {"StandardCost", type number}, {"Color", type text}, {"Size", Int64.Type}, {"Weight", type number}}),
+				    #"Replaced Errors" = Table.ReplaceErrorValues(#"Changed Type", {{"Size", null}}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Replaced Errors",{"ProductID", "ProductName", "ProductNumber", "ProductCategoryName", "ListPrice", "StandardCost", "Color", "Size", "Weight"})
+				in
+				    #"Removed Other Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

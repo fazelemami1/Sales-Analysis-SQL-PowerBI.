@@ -1,0 +1,135 @@
+table DimDate
+	lineageTag: 739df971-7fdc-4b43-a0a3-e9982c4a64b2
+	dataCategory: Time
+
+	column Date
+		isKey
+		formatString: Long Date
+		lineageTag: d60a11b8-6953-49a6-a5cd-3650ecac2da7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		formatString: 0
+		lineageTag: a706827b-a316-4066-a29b-216c1033b669
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Number'
+		formatString: 0
+		lineageTag: 1fd93b27-25f6-4bbe-b161-596910f1e14a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month Number]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Name'
+		lineageTag: 2d40c87b-59ed-457c-89c1-c0b73d3bedb0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month Name]
+		sortByColumn: 'Month Number'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Short'
+		lineageTag: 820a2457-34ac-49a0-af62-1099874bc41f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month Short]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		lineageTag: 97d1b304-8cd2-4eea-b8ff-c7bea7a27fdf
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Quarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Year Month'
+		lineageTag: 4005d960-ffd7-40df-a8ee-3e3cd8542cff
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year Month]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Weekday
+		lineageTag: a2239882-ba95-47b6-8d56-85fc96f761b5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Weekday]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Day Number'
+		formatString: 0
+		lineageTag: 1802390b-a4a0-4d1e-b66e-9b4267a79ec6
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Day Number]
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearMonthKey
+		formatString: 0
+		lineageTag: 84992576-13ee-4cc0-af58-9d3f3ee2d287
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [YearMonthKey]
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCurrentYear
+		formatString: 0
+		lineageTag: 69b36543-c587-4523-838f-4f8fbad4cd18
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [IsCurrentYear]
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCurrentMonth
+		formatString: 0
+		lineageTag: 440394dd-e4a8-4d63-a374-038148c4fef0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [IsCurrentMonth]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimDate = calculated
+		mode: import
+		source =
+				
+				VAR StartDate = DATE(2000, 1, 1)
+				VAR EndDate = DATE(2025, 12, 31)
+				RETURN
+				ADDCOLUMNS(
+				    CALENDAR(StartDate, EndDate),
+				    "Year", YEAR([Date]),
+				    "Month Number", MONTH([Date]),
+				    "Month Name", FORMAT([Date], "MMMM"),
+				    "Month Short", FORMAT([Date], "MMM"),
+				    "Quarter", "Q" & FORMAT([Date], "Q"),
+				    "Year Month", FORMAT([Date], "YYYY-MM"),
+				    "YearMonthKey", YEAR([Date]) * 100 + MONTH([Date]),
+				    "Weekday", FORMAT([Date], "dddd"),
+				    "Day Number", WEEKDAY([Date], 2), -- Starts Monday
+				    "IsCurrentYear", IF(YEAR([Date]) = YEAR(TODAY()), 1, 0),
+				    "IsCurrentMonth", IF( YEAR([Date]) = YEAR(TODAY()) &&    MONTH([Date]) = MONTH(TODAY()),    1, 0)
+				   )
+
+	annotation PBI_Id = 39b7e090e84447afb29514f972452cad
+

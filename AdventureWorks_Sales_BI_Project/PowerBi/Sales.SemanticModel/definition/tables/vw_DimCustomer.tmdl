@@ -1,0 +1,77 @@
+table vw_DimCustomer
+	lineageTag: 501024ca-f005-4e25-81e9-148c475f835e
+
+	measure 'Top Customers 80% KPI' = ```
+			
+			VAR CustomerCount = [Customers to Reach 80%]
+			RETURN
+			"Top " & CustomerCount & " customers = 80% of sales"
+			
+			```
+		lineageTag: 57075ed8-5117-478a-bb8f-5352ab543979
+
+	column CustomerID
+		dataType: int64
+		formatString: 0
+		lineageTag: 737625bc-fa95-4e27-9165-97887a9d3ccd
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerName
+		dataType: string
+		lineageTag: 961ce7f8-3be3-48ff-92ef-56c31b6bb6d4
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CompanyName
+		dataType: string
+		lineageTag: 1c78e817-3b0d-42ef-94fe-4530908f326b
+		summarizeBy: none
+		sourceColumn: CompanyName
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesPerson
+		dataType: string
+		lineageTag: 6fc21514-a540-4760-b2d1-798572818763
+		summarizeBy: none
+		sourceColumn: SalesPerson
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmailAddress
+		dataType: string
+		lineageTag: 9090780a-dffe-4e89-aa41-47d6353f94d1
+		summarizeBy: none
+		sourceColumn: EmailAddress
+
+		annotation SummarizationSetBy = Automatic
+
+	column Phone
+		dataType: string
+		lineageTag: 0d4d35e0-2042-46a7-a57f-f8cf4fdc4f9d
+		summarizeBy: none
+		sourceColumn: Phone
+
+		annotation SummarizationSetBy = Automatic
+
+	partition vw_DimCustomer = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases(".\SQLEXPRESS"),
+				    AdventureWorksLT2025 = Source{[Name="AdventureWorksLT2025"]}[Data],
+				    dbo_vw_DimCustomer = AdventureWorksLT2025{[Schema="dbo",Item="vw_DimCustomer"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(dbo_vw_DimCustomer,{{"CustomerID", Int64.Type}, {"CustomerName", type text}, {"CompanyName", type text}, {"SalesPerson", type text}, {"EmailAddress", type text}, {"Phone", type text}}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"CustomerID", "CustomerName", "CompanyName", "SalesPerson", "EmailAddress", "Phone"})
+				in
+				    #"Removed Other Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

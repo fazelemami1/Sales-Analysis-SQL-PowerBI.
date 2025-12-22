@@ -1,0 +1,16 @@
+relationship AutoDetected_8c5631e3-57dc-4fa6-8142-94ba0438b856
+	fromColumn: vw_FactSales_Simulated.CustomerID
+	toColumn: vw_DimCustomer.CustomerID
+
+relationship AutoDetected_b58a9880-6520-4ce4-ba7a-55be68970dc6
+	fromColumn: vw_FactSales_Simulated.ProductID
+	toColumn: vw_DimProduct.ProductID
+
+relationship 82602e33-f83c-df9f-23b3-c0cb2c21b6e7
+	fromColumn: vw_FactSales_Simulated.OrderDate
+	toColumn: DimDate.Date
+
+relationship 99eae260-1161-a958-0cd9-7780bb5ce523
+	fromColumn: vw_FactSales_Simulated.ShipToAddressID
+	toColumn: DimGeography.AddressID
+

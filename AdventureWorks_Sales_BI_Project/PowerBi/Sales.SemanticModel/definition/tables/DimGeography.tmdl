@@ -1,0 +1,60 @@
+table DimGeography
+	lineageTag: dbedf199-98ff-4f80-b53f-d4055abdef1e
+
+	column AddressID
+		dataType: int64
+		formatString: 0
+		lineageTag: b0a55283-3821-4b8d-8425-63a9bb0474e9
+		summarizeBy: none
+		sourceColumn: AddressID
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		lineageTag: 4648f4b6-45c1-485a-8ece-cb5859dee6e5
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column StateProvince
+		dataType: string
+		lineageTag: dbbd3767-8296-4a9d-9f13-323433144e4d
+		summarizeBy: none
+		sourceColumn: StateProvince
+
+		annotation SummarizationSetBy = Automatic
+
+	column CountryRegion
+		dataType: string
+		lineageTag: 80084e28-7422-463d-95a9-16c283b8161e
+		summarizeBy: none
+		sourceColumn: CountryRegion
+
+		annotation SummarizationSetBy = Automatic
+
+	column PostalCode
+		dataType: string
+		lineageTag: 77ce012c-88f8-4512-8838-3058de4e53ba
+		summarizeBy: none
+		sourceColumn: PostalCode
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimGeography = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases(".\SQLEXPRESS"),
+				    AdventureWorksLT2025 = Source{[Name="AdventureWorksLT2025"]}[Data],
+				    dbo_DimGeography = AdventureWorksLT2025{[Schema="dbo",Item="DimGeography"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(dbo_DimGeography,{{"AddressID", Int64.Type}, {"City", type text}, {"StateProvince", type text}, {"CountryRegion", type text}, {"PostalCode", type text}}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"AddressID", "City", "StateProvince", "CountryRegion", "PostalCode"})
+				in
+				    #"Removed Other Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

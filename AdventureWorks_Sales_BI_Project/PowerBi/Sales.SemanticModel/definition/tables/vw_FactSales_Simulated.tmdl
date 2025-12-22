@@ -1,0 +1,146 @@
+table vw_FactSales_Simulated
+	lineageTag: cf3ba958-7d5e-4336-ac4f-44d0c00fe0d7
+
+	column SalesOrderID
+		dataType: int64
+		formatString: 0
+		lineageTag: 81592f2a-a775-4dcd-bc9e-44a4958ef394
+		summarizeBy: count
+		sourceColumn: SalesOrderID
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesOrderDetailID
+		dataType: int64
+		formatString: 0
+		lineageTag: 5c2836be-1104-4022-aa20-afd6f567f0d4
+		summarizeBy: count
+		sourceColumn: SalesOrderDetailID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: int64
+		formatString: 0
+		lineageTag: 95a6d6e5-63ba-40ce-9e72-b088ce768922
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID
+		dataType: int64
+		formatString: 0
+		lineageTag: 1f372831-47bb-40c0-b571-179ab66bb808
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ShipToAddressID
+		dataType: int64
+		formatString: 0
+		lineageTag: 3f7ec1e8-e51d-419e-b5d3-513635c3b37e
+		summarizeBy: none
+		sourceColumn: ShipToAddressID
+
+		annotation SummarizationSetBy = Automatic
+
+	column BillToAddressID
+		dataType: int64
+		formatString: 0
+		lineageTag: 9f41092e-2949-4e1b-99af-30fb051c2dc1
+		summarizeBy: count
+		sourceColumn: BillToAddressID
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e58fab4e-76bb-46da-aed0-3627fb480f4c
+		summarizeBy: none
+		sourceColumn: OrderDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderQty
+		dataType: int64
+		formatString: 0
+		lineageTag: fd1bd265-5447-4af7-a090-9a499e1b9905
+		summarizeBy: sum
+		sourceColumn: OrderQty
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitPriceAmount
+		dataType: double
+		lineageTag: 6f347192-d730-40b4-82b2-233c943ea1b5
+		summarizeBy: sum
+		sourceColumn: UnitPriceAmount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column UnitPriceDiscount
+		dataType: double
+		lineageTag: 9d9050a6-ff7b-483c-9fa0-20c6c9deeefd
+		summarizeBy: sum
+		sourceColumn: UnitPriceDiscount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LineTotalAmount
+		dataType: double
+		lineageTag: df4fb548-7df3-411b-888a-518cddd08c99
+		summarizeBy: sum
+		sourceColumn: LineTotalAmount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SalesOrderNumber
+		dataType: string
+		lineageTag: 7d2fb769-e61c-4122-8803-b5975cb543df
+		summarizeBy: none
+		sourceColumn: SalesOrderNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: int64
+		formatString: 0
+		lineageTag: 03e27641-ab10-4c3a-b7bf-326569abff40
+		summarizeBy: sum
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column ShipMethod
+		dataType: string
+		lineageTag: c469caf6-6031-4043-8d69-2c58029fbfbb
+		summarizeBy: none
+		sourceColumn: ShipMethod
+
+		annotation SummarizationSetBy = Automatic
+
+	partition vw_FactSales_Simulated = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases(".\sqlexpress"),
+				    AdventureWorksLT2025 = Source{[Name="AdventureWorksLT2025"]}[Data],
+				    dbo_vw_FactSales_Simulated = AdventureWorksLT2025{[Schema="dbo",Item="vw_FactSales_Simulated"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(dbo_vw_FactSales_Simulated,{{"SalesOrderID", Int64.Type}, {"SalesOrderDetailID", Int64.Type}, {"CustomerID", Int64.Type}, {"ProductID", Int64.Type}, {"ShipToAddressID", Int64.Type}, {"BillToAddressID", Int64.Type}, {"OrderDate", type datetime}, {"OrderQty", Int64.Type}, {"UnitPriceAmount", type number}, {"UnitPriceDiscount", type number}, {"LineTotalAmount", type number}, {"SalesOrderNumber", type text}, {"Status", Int64.Type}, {"ShipMethod", type text}}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Changed Type",{"SalesOrderID", "SalesOrderDetailID", "CustomerID", "ProductID", "ShipToAddressID", "BillToAddressID", "OrderDate", "OrderQty", "UnitPriceAmount", "UnitPriceDiscount", "LineTotalAmount", "SalesOrderNumber", "Status", "ShipMethod"})
+				in
+				    #"Removed Other Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
